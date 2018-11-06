@@ -1,0 +1,19 @@
+version: "2"
+services:
+  web:
+    hostname: webapp
+    build: ./docker/Dockerfiles/web
+    restart: always
+    user: docker
+    command: /run.sh
+    environment:
+      APPLICATION_ENV: development
+    volumes:
+      - .:/var/www/html:cached
+  db:
+    image: 'mysql:5.6'
+    hostname: database
+    volumes:
+      - ./docker/volumes/db/data:/var/lib/mysql
+      - ./docker/volumes/db/dump:/docker-entrypoint-initdb.d
+      - ./db_dumps:/opt/db_dumps

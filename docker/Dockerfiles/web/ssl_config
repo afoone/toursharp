@@ -1,0 +1,12 @@
+[ req ]
+distinguished_name	= req_distinguished_name
+prompt			= no
+
+[ req_distinguished_name ]
+C			= ES
+ST			= .
+L			= .
+O			= .
+OU			= .
+CN			= www.masiadetraver.com
+emailAddress		= .
