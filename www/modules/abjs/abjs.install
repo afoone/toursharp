@@ -1,0 +1,257 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the abjs module.
+ *
+ * Settings variables are initially set. All table schemas for the Test,
+ * Condition, and Experience data are defined in custom schemas. Two tables are
+ * used to store the Conditions and Experiences that are used in each Test.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function abjs_install() {
+}
+
+
+/**
+ * Implements hook_schema().
+ */
+function abjs_schema() {
+  $schema = array();
+  $schema['abjs_test'] = array(
+    'description' => 'The table for a/b tests.',
+    'fields' => array(
+      'tid' => array(
+        'description' => 'The primary identifier for a test.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'description' => 'The name of this test.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'active' => array(
+        'description' => 'Boolean indicating whether the test is active or not.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the test was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created_by' => array(
+        'description' => 'The uid of the user who created the test.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the test was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed_by' => array(
+        'description' => 'The uid of the user who last modified the test.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('tid'),
+  );
+
+  $schema['abjs_experience'] = array(
+    'description' => 'The table for a/b test experiences.',
+    'fields' => array(
+      'eid' => array(
+        'description' => 'The primary identifier for an experience.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'description' => 'The name of this experience.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'script' => array(
+        'description' => 'The JavaScript for this experience.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'big',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the experience was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created_by' => array(
+        'description' => 'The uid of the user who created the experience.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the experience was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed_by' => array(
+        'description' => 'The uid of the user who last modified the experience.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('eid'),
+  );
+
+  $schema['abjs_condition'] = array(
+    'description' => 'The table for a/b test conditions.',
+    'fields' => array(
+      'cid' => array(
+        'description' => 'The primary identifier for a condition.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'name' => array(
+        'description' => 'The name of this condition.',
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'script' => array(
+        'description' => 'The JavaScript for this condition.',
+        'type' => 'text',
+        'not null' => TRUE,
+        'size' => 'big',
+      ),
+      'created' => array(
+        'description' => 'The Unix timestamp when the condition was created.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'created_by' => array(
+        'description' => 'The uid of the user who created the condition.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the condition was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed_by' => array(
+        'description' => 'The uid of the user who last modified the condition.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('cid'),
+  );
+
+  $schema['abjs_test_experience'] = array(
+    'description' => 'The table associating a/b tests with experiences.',
+    'fields' => array(
+      'teid' => array(
+        'description' => 'The primary identifier for the test_experience table.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'tid' => array(
+        'description' => 'The test.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'eid' => array(
+        'description' => 'The experience.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'fraction' => array(
+        'description' => 'The fraction of this test assigned to this experience.',
+        'type' => 'varchar',
+        'length' => 12,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'foreign keys' => array(
+      'test' => array(
+        'table' => 'test',
+        'columns' => array('tid' => 'tid'),
+      ),
+      'experience' => array(
+        'table' => 'experience',
+        'columns' => array('eid' => 'eid'),
+      ),
+    ),
+    'primary key' => array('teid'),
+  );
+
+  $schema['abjs_test_condition'] = array(
+    'description' => 'The table associating a/b tests with conditions.',
+    'fields' => array(
+      'tcid' => array(
+        'description' => 'The primary identifier for the test_condition table.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'tid' => array(
+        'description' => 'The test.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'cid' => array(
+        'description' => 'The condition.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'foreign keys' => array(
+      'test' => array(
+        'table' => 'test',
+        'columns' => array('tid' => 'tid'),
+      ),
+      'condition' => array(
+        'table' => 'condition',
+        'columns' => array('cid' => 'cid'),
+      ),
+    ),
+    'primary key' => array('tcid'),
+  );
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function abjs_uninstall() {
+}

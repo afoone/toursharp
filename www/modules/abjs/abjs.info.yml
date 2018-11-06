@@ -1,0 +1,11 @@
+name: A/B Test JS
+description: A/B Test JS
+# core: 8.x
+type: module
+configure: abjs.settings_admin
+
+# Information added by Drupal.org packaging script on 2017-02-06
+version: '8.x-1.1'
+core: '8.x'
+project: 'abjs'
+datestamp: 1486357689
